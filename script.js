@@ -58,22 +58,53 @@ function initMobileMenu() {
 
   if (!mobileToggle || !navLinks) return;
 
+  function closeMenu() {
+    navLinks.classList.remove('open');
+    mobileToggle.classList.remove('active');
+    mobileToggle.setAttribute('aria-expanded', 'false');
+  }
+
+  function openMenu() {
+    navLinks.classList.add('open');
+    mobileToggle.classList.add('active');
+    mobileToggle.setAttribute('aria-expanded', 'true');
+  }
+
   mobileToggle.addEventListener('click', (e) => {
     e.stopPropagation();
-    navLinks.classList.toggle('open');
+    const isOpen = navLinks.classList.contains('open');
+    if (isOpen) {
+      closeMenu();
+    } else {
+      openMenu();
+    }
   });
 
   // Close when clicking any nav link
   navLinks.querySelectorAll('a').forEach((link) => {
     link.addEventListener('click', () => {
-      navLinks.classList.remove('open');
+      closeMenu();
     });
   });
 
   // Close when clicking outside
   document.addEventListener('click', (e) => {
     if (!navLinks.contains(e.target) && !mobileToggle.contains(e.target)) {
-      navLinks.classList.remove('open');
+      closeMenu();
+    }
+  });
+
+  // Close when pressing Escape key
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape' && navLinks.classList.contains('open')) {
+      closeMenu();
+    }
+  });
+
+  // Close when resizing above tablet breakpoint
+  window.addEventListener('resize', () => {
+    if (window.innerWidth > 860 && navLinks.classList.contains('open')) {
+      closeMenu();
     }
   });
 }
@@ -115,9 +146,9 @@ function initSmoothScroll() {
       const targetElement = document.querySelector(targetId);
       if (targetElement) {
         e.preventDefault();
-        const headerOffset = 70;
-        const elementPosition = targetElement.getBoundingClientRect().top;
-        const offsetPosition = elementPosition + window.pageYOffset - headerOffset;
+        const header = document.querySelector('.site-header');
+        const headerHeight = header ? header.offsetHeight : 60;
+        const offsetPosition = targetElement.getBoundingClientRect().top + window.pageYOffset - (headerHeight + 16);
 
         window.scrollTo({
           top: offsetPosition,

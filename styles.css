@@ -82,6 +82,7 @@ html {
   scroll-behavior: smooth;
   font-size: 16px;
   -webkit-font-smoothing: antialiased;
+  overflow-x: hidden;
 }
 
 body {
@@ -89,7 +90,15 @@ body {
   background-color: var(--bg);
   color: var(--text);
   line-height: 1.6;
+  overflow-x: hidden;
+  width: 100%;
+  position: relative;
   transition: background-color var(--transition), color var(--transition);
+}
+
+img {
+  max-width: 100%;
+  height: auto;
 }
 
 .container {
@@ -105,17 +114,18 @@ h1, h2, h3, h4 {
   font-weight: 600;
   line-height: 1.25;
   letter-spacing: -0.02em;
+  overflow-wrap: break-word;
 }
 
 h1 {
-  font-size: clamp(2.2rem, 4.5vw, 3.4rem);
+  font-size: clamp(1.75rem, 5vw, 3.2rem);
   font-weight: 700;
   letter-spacing: -0.03em;
   line-height: 1.15;
 }
 
 h2 {
-  font-size: clamp(1.6rem, 3vw, 2.2rem);
+  font-size: clamp(1.35rem, 3.8vw, 2.2rem);
   margin-bottom: 0.8rem;
 }
 
@@ -128,6 +138,7 @@ p {
   color: var(--text-muted);
   font-size: 1.05rem;
   line-height: 1.65;
+  overflow-wrap: break-word;
 }
 
 a {
@@ -216,6 +227,10 @@ kbd {
 
 .nav-links a:hover {
   color: var(--text);
+}
+
+.nav-cta {
+  display: none;
 }
 
 .header-actions {
@@ -311,6 +326,26 @@ kbd {
   padding: 0.4rem;
   border-radius: var(--radius-sm);
   cursor: pointer;
+  align-items: center;
+  justify-content: center;
+  transition: border-color var(--transition), color var(--transition);
+}
+
+.mobile-btn:hover {
+  border-color: var(--border-active);
+  color: var(--text);
+}
+
+.mobile-btn .menu-close-icon {
+  display: none;
+}
+
+.mobile-btn.active .menu-open-icon {
+  display: none;
+}
+
+.mobile-btn.active .menu-close-icon {
+  display: block;
 }
 
 /* --- 4. Hero Section --- */
@@ -326,7 +361,8 @@ kbd {
 .hero-meta-bar {
   display: flex;
   align-items: center;
-  gap: 0.6rem;
+  flex-wrap: wrap;
+  gap: 0.4rem 0.6rem;
   margin-bottom: 1.2rem;
   font-size: 0.85rem;
   font-family: var(--font-mono);
@@ -335,6 +371,11 @@ kbd {
 
 .hero-meta-bar span {
   color: var(--text-muted);
+}
+
+.hero-meta-bar .meta-sep {
+  color: var(--border-active);
+  opacity: 0.6;
 }
 
 .hero-title {
@@ -359,7 +400,8 @@ kbd {
 .hero-specs {
   display: flex;
   align-items: center;
-  gap: 1.5rem;
+  flex-wrap: wrap;
+  gap: 0.6rem 1.25rem;
   font-size: 0.85rem;
   color: var(--text-subtle);
   font-family: var(--font-mono);
@@ -378,12 +420,24 @@ kbd {
   display: flex;
   align-items: center;
   justify-content: space-between;
+  gap: 0.75rem;
   padding: 0.6rem 1rem;
   background: var(--bg);
   border-bottom: 1px solid var(--border);
   font-family: var(--font-mono);
   font-size: 0.8rem;
   color: var(--text-muted);
+}
+
+.window-header > span:nth-child(2) {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.window-dots, .window-badge {
+  flex-shrink: 0;
 }
 
 .window-dots {
@@ -427,6 +481,7 @@ kbd {
 
 .comparison-table-wrapper {
   overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
   border: 1px solid var(--border);
   border-radius: var(--radius-md);
   background: var(--bg-subtle);
@@ -434,6 +489,7 @@ kbd {
 
 .comparison-table {
   width: 100%;
+  min-width: 620px;
   border-collapse: collapse;
   font-size: 0.95rem;
   text-align: left;
@@ -526,6 +582,8 @@ kbd {
   padding: 1.5rem;
   font-family: var(--font-mono);
   font-size: 0.88rem;
+  max-width: 100%;
+  overflow-x: auto;
 }
 
 .code-preview-header {
@@ -547,6 +605,38 @@ kbd {
   color: var(--accent);
 }
 
+.pipeline-flow {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.4rem 0.5rem;
+  line-height: 1.6;
+}
+
+.pipeline-step {
+  display: inline-flex;
+  align-items: center;
+  background: var(--bg);
+  border: 1px solid var(--border);
+  padding: 0.2rem 0.55rem;
+  border-radius: var(--radius-sm);
+  font-size: 0.82rem;
+  white-space: nowrap;
+}
+
+.pipeline-step.highlight {
+  border-color: var(--accent);
+  color: var(--accent);
+  background: var(--accent-subtle);
+  font-weight: 600;
+}
+
+.pipeline-arrow {
+  color: var(--text-subtle);
+  font-size: 0.8rem;
+  user-select: none;
+}
+
 /* --- 7. Keyboard Command Strip (Status Bar Style) --- */
 .shortcuts-strip-section {
   padding: 4.5rem 0;
@@ -555,7 +645,7 @@ kbd {
 
 .shortcuts-bar {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 260px), 1fr));
   gap: 1px;
   background: var(--border);
   border: 1px solid var(--border);
@@ -569,7 +659,8 @@ kbd {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 1rem;
+  gap: 0.75rem;
+  flex-wrap: wrap;
   transition: background var(--transition);
 }
 
@@ -581,12 +672,15 @@ kbd {
   font-size: 0.9rem;
   font-weight: 500;
   color: var(--text);
+  min-width: 0;
+  word-break: break-word;
 }
 
 .shortcut-keys {
   display: flex;
   align-items: center;
   gap: 0.25rem;
+  flex-shrink: 0;
 }
 
 /* --- 8. Download Panel & Release Matrix --- */
@@ -658,6 +752,17 @@ kbd {
   flex-shrink: 0;
 }
 
+.download-btn {
+  text-align: center;
+  word-break: break-word;
+  overflow-wrap: break-word;
+}
+
+.download-btn span {
+  word-break: break-word;
+  overflow-wrap: break-word;
+}
+
 .smartscreen-notice {
   margin-top: 2.5rem;
   padding: 1.25rem 1.5rem;
@@ -667,6 +772,7 @@ kbd {
   border-radius: var(--radius-sm);
   font-size: 0.9rem;
   color: var(--text-muted);
+  word-break: break-word;
 }
 
 .smartscreen-notice strong {
@@ -700,14 +806,21 @@ kbd {
   display: flex;
   justify-content: space-between;
   align-items: center;
+  gap: 1rem;
   cursor: pointer;
   font-family: var(--font-sans);
+}
+
+.faq-trigger span {
+  min-width: 0;
+  word-break: break-word;
 }
 
 .faq-icon {
   width: 18px;
   height: 18px;
   color: var(--text-muted);
+  flex-shrink: 0;
   transition: transform var(--transition);
 }
 
@@ -722,10 +835,11 @@ kbd {
   color: var(--text-muted);
   font-size: 0.95rem;
   line-height: 1.6;
+  word-break: break-word;
 }
 
 .faq-row.active .faq-content {
-  max-height: 300px;
+  max-height: 500px;
   padding-bottom: 1.25rem;
 }
 
@@ -747,7 +861,8 @@ kbd {
 
 .footer-links {
   display: flex;
-  gap: 1.5rem;
+  flex-wrap: wrap;
+  gap: 1rem 1.5rem;
   list-style: none;
 }
 
@@ -755,18 +870,80 @@ kbd {
   color: var(--text);
 }
 
-/* --- 11. Responsive --- */
+/* --- 11. Responsive Design --- */
+
+/* Small Laptops / Tablets Landscape (<= 1000px) */
+@media (max-width: 1000px) {
+  .nav-links {
+    gap: 1rem;
+  }
+}
+
+/* Tablets Portrait & Below (<= 860px) */
 @media (max-width: 860px) {
+  :root {
+    --header-height: 58px;
+  }
+
+  /* Mobile Navigation Drawer */
+  .nav-links {
+    display: none;
+    position: fixed;
+    top: var(--header-height);
+    left: 0;
+    right: 0;
+    background: var(--bg);
+    border-bottom: 1px solid var(--border);
+    padding: 1.5rem;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 1.1rem;
+    max-height: calc(100vh - var(--header-height));
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+    box-shadow: 0 16px 32px rgba(0, 0, 0, 0.4);
+    z-index: 99;
+  }
+
+  .nav-links.open {
+    display: flex;
+  }
+
+  .nav-links a {
+    font-size: 1rem;
+    padding: 0.35rem 0;
+  }
+
+  .nav-cta {
+    display: inline-flex;
+    width: 100%;
+    margin-top: 0.5rem;
+    padding: 0.75rem 1rem;
+    font-size: 0.95rem;
+  }
+
+  .mobile-btn {
+    display: flex;
+  }
+
+  .header-actions .header-cta {
+    display: none;
+  }
+
+  /* Features & Downloads Layout */
   .split-feature {
     grid-template-columns: 1fr;
     gap: 2rem;
+    padding: 3.5rem 0;
   }
 
   .download-matrix {
     grid-template-columns: 1fr;
+    gap: 1.5rem;
   }
 }
 
+/* Tablets / Large Mobile (<= 768px) */
 @media (max-width: 768px) {
   .comparison-table-wrapper {
     border: none;
@@ -780,6 +957,7 @@ kbd {
   .comparison-table td {
     display: block;
     width: 100%;
+    min-width: 0;
   }
 
   .comparison-table thead {
@@ -843,39 +1021,29 @@ kbd {
   }
 }
 
+/* Mobile Screens (<= 640px) */
 @media (max-width: 640px) {
   :root {
     --header-height: 56px;
   }
 
-  .nav-links {
-    display: none;
-    position: fixed;
-    top: var(--header-height);
-    left: 0;
-    right: 0;
-    background: var(--bg);
-    border-bottom: 1px solid var(--border);
-    padding: 1.5rem;
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 1rem;
+  .container {
+    padding: 0 1.25rem;
   }
 
-  .nav-links.open {
-    display: flex;
-  }
-
-  .mobile-btn {
-    display: block;
-  }
-
-  .header-actions .btn {
-    display: none;
+  .section,
+  .shortcuts-strip-section,
+  .download-section,
+  .faq-section {
+    padding: 3.5rem 0;
   }
 
   .hero {
     padding: 3rem 0 2.5rem;
+  }
+
+  .hero-desc {
+    font-size: 1.05rem;
   }
 
   .hero-actions {
@@ -887,8 +1055,80 @@ kbd {
     width: 100%;
   }
 
+  .download-box {
+    padding: 1.5rem 1.25rem;
+  }
+
+  .download-btn {
+    width: 100%;
+    font-size: 0.9rem;
+    padding: 0.75rem 1rem;
+  }
+
   .footer-inner {
     flex-direction: column;
     align-items: flex-start;
+    gap: 1.25rem;
+  }
+}
+
+/* Small Mobile Screens (<= 480px) */
+@media (max-width: 480px) {
+  .container {
+    padding: 0 1rem;
+  }
+
+  .section,
+  .shortcuts-strip-section,
+  .download-section,
+  .faq-section {
+    padding: 2.75rem 0;
+  }
+
+  .hero {
+    padding: 2.5rem 0 2rem;
+  }
+
+  .hero-specs {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.35rem;
+  }
+
+  .hero-specs span:nth-child(2) {
+    display: none; /* Hide bullet separator in vertical stack */
+  }
+
+  .showcase-wrapper {
+    margin-top: 2rem;
+  }
+
+  .window-header {
+    padding: 0.5rem 0.75rem;
+    font-size: 0.72rem;
+  }
+
+  .split-preview {
+    padding: 1rem;
+  }
+
+  .shortcut-item {
+    padding: 1rem;
+  }
+
+  .btn-lg {
+    padding: 0.7rem 1rem;
+    font-size: 0.9rem;
+  }
+
+  .smartscreen-notice {
+    padding: 1rem;
+    font-size: 0.85rem;
+    margin-top: 1.75rem;
+  }
+
+  .faq-trigger {
+    font-size: 0.98rem;
+    padding: 1rem 0;
   }
 }
